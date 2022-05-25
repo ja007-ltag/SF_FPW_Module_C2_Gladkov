@@ -1,16 +1,17 @@
-# This is a sample Python script.
+class Dot:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+    # отвечает за сравнение двух объектов (и использование ==, !=, in, count и т.п.)
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    # отвечает за вывод, которым можно создавать список, например
+    # print(a) -- Dot(1, 1) или print([a, b, c]) -- [Dot(1, 1), Dot(3, 2), Dot(1, 1)]
+    def __repr__(self):
+        return f"Dot({self.x}, {self.y})"
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    print()
