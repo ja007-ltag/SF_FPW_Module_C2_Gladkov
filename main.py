@@ -32,5 +32,28 @@ class Dot:
         return f"Dot({self.x}, {self.y})"
 
 
+class Ship:  # Корабли
+    def __init__(self, dot, size, o):
+        self.dot = dot  # точка носа корабля - Dot(x, y)
+        self.size = size  # размер корабля (1,2,3 палубный)
+        self.o = o  # ориентация корабля (0-горизонтальный, 1-вертикальный)
+        self.lives = size  # текущее количество жизней
+
+    @property
+    def dots(self):  # генерация всех точек корабля
+        ship_dots = []
+
+        for i in range(self.size):
+            if self.o == 0:
+                ship_dots.append(Dot(self.dot.x + i, self.dot.y))
+            elif self.o == 1:
+                ship_dots.append(Dot(self.dot.x, self.dot.y + i))
+
+        return ship_dots
+
+    def shot_hit(self, shot_dots):
+        return shot_dots in self.dots
+
+
 if __name__ == '__main__':
-    print()
+    pass
