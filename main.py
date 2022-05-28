@@ -45,9 +45,9 @@ class Ship:  # Корабли
 
         for i in range(self.size):
             if self.o == 0:
-                ship_dots.append(Dot(self.dot.x + i, self.dot.y))
-            elif self.o == 1:
                 ship_dots.append(Dot(self.dot.x, self.dot.y + i))
+            elif self.o == 1:
+                ship_dots.append(Dot(self.dot.x + i, self.dot.y))
 
         return ship_dots
 
