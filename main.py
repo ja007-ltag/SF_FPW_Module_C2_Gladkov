@@ -138,5 +138,23 @@ class Board:
         self.busy = []
 
 
+class Player:
+    def __init__(self, board_my, board_enemy):
+        self.board_my = board_my
+        self.board_enemy = board_enemy
+
+    def ask(self):
+        raise NotImplementedError()
+
+    def move(self):
+        while True:
+            try:
+                target = self.ask()
+                repeat = self.board_enemy.shot(target)
+                return repeat
+            except BoardException as e:
+                print(e)
+
+
 if __name__ == '__main__':
     pass
