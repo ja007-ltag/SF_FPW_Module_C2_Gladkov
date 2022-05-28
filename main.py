@@ -108,6 +108,35 @@ class Board:
         self.ships.append(ship)
         self.contour(ship)
 
+    def shot(self, dot):
+        if self.out(dot):
+            raise BoardOutException()
+
+        if dot in self.busy:
+            raise BoardUserException()
+
+        self.busy.append(dot)
+
+        for ship in self.ships:
+            if ship.shot_hit(dot):
+                ship.lives -= 1
+                self.field[dot.x][dot.y] = "x"
+                if ship.lives == 0:
+                    self.count += 1
+                    self.contour(ship, verb=True)
+                    print("Корабль уничтожен!")
+                    return False
+                else:
+                    print("Корабль ранен!")
+                    return True
+
+        self.field[dot.x][dot.y] = "."
+        print("Мимо!")
+        return False
+
+    def begin(self):
+        self.busy = []
+
 
 if __name__ == '__main__':
     pass
