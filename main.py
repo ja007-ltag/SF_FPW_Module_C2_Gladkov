@@ -55,5 +55,59 @@ class Ship:  # Корабли
         return shot_dots in self.dots
 
 
+class Board:
+    def __init__(self, hid=False, size=6):
+        self.hid = hid  # скрытая ли доска
+        self.size = size
+
+        self.count = 0  # кол-во пораженных кораблей
+
+        self.field = [[" "] * size for _ in range(size)]
+
+        self.busy = []  # список занятых клеток
+        self.ships = []  # список кораблей
+
+    def __str__(self):
+        def f_str(n, cell):
+            return f"| {n} | {' | '.join(cell)} |\n" + sep_line
+
+        header = [str(n+1) for n in (range(self.size))]
+        sep_line = f"{'+---'* (self.size + 1)}+\n"
+
+        res = sep_line
+        res += f_str("\\", header)
+        for i, row in enumerate(self.field):
+            res += f_str(i+1, row)
+
+        if self.hid:
+            res = res.replace("■", " ")
+        return res
+
+    def out(self, dot):  # находится ли точка за пределами доски
+        return not ((0 <= dot.x < self.size) and (0 <= dot.y < self.size))
+
+    def contour(self, ship, verb=False):
+        near = [(i-1, j-1) for i in range(3) for j in range(3)]
+        for d in ship.dots:
+            for dx, dy in near:
+                cur = Dot(d.x + dx, d.y + dy)
+                if not self.out(cur) and cur not in self.busy:
+                    if verb:
+                        self.field[cur.x][cur.y] = "."
+                    self.busy.append(cur)
+
+    def add_ship(self, ship):
+        for d in ship.dots:
+            if self.out(d) or d in self.busy:
+                raise BoardWrongShipException()
+
+        for d in ship.dots:
+            self.field[d.x][d.y] = "■"
+            self.busy.append(d)
+
+        self.ships.append(ship)
+        self.contour(ship)
+
+
 if __name__ == '__main__':
     pass
