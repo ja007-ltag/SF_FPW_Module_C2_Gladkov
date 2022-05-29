@@ -71,16 +71,15 @@ class Board:
         self.ships = []  # список кораблей
 
     def __str__(self):
-        def f_str(n, cell):
-            return f"| {n} | {' | '.join(cell)} |\n" + sep_line
-
-        header = [str(n+1) for n in (range(self.size))]
-        sep_line = f"{'+---'* (self.size + 1)}+\n"
-
+        sep_line = f"{'+---' * (self.size + 1)}+\n"
         res = sep_line
-        res += f_str("\\", header)
+
+        header = [f"{n:2} " for n in range(1, self.size + 1)]
+        res += f"| \\ |{'|'.join(header)}|\n"
+        res += sep_line
         for i, row in enumerate(self.field):
-            res += f_str(i+1, row)
+            res += f"|{i + 1:2} | {' | '.join(row)} |\n"
+            res += sep_line
 
         if self.hid:
             res = res.replace("■", " ")
@@ -90,7 +89,7 @@ class Board:
         return not ((0 <= dot.x < self.size) and (0 <= dot.y < self.size))
 
     def contour(self, ship, verb=False):
-        near = [(i-1, j-1) for i in range(3) for j in range(3)]
+        near = [(i, j) for i in range(-1, 2) for j in range(-1, 2)]
         for d in ship.dots:
             for dx, dy in near:
                 cur = Dot(d.x + dx, d.y + dy)
