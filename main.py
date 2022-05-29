@@ -1,3 +1,6 @@
+from random import randint
+
+
 # --- Классы исключений ---
 class BoardException(Exception):
     pass
@@ -154,6 +157,32 @@ class Player:
                 return repeat
             except BoardException as e:
                 print(e)
+
+
+class AI(Player):
+    def ask(self):
+        dot = Dot(randint(0, 5), randint(0, 5))
+        print(f"Ход компьютера: {dot.x+1} {dot.y+1}")
+        return dot
+
+
+class User(Player):
+    def ask(self):
+        while True:
+            cords = input("Ваш ход: ").split()
+
+            if len(cords) != 2:
+                print("Пожалуйста, введите 2 координаты!")
+                continue
+
+            x, y = cords
+
+            if not (x.isdigit() and y.isdigit()):
+                print("Пожалуйста, введите числа!")
+                continue
+
+            x, y = int(x), int(y)
+            return Dot(x-1, y-1)
 
 
 if __name__ == '__main__':
