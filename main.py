@@ -1,4 +1,5 @@
 from random import randint
+import string
 
 
 # --- Классы исключений ---
@@ -168,21 +169,79 @@ class AI(Player):
 class User(Player):
     def ask(self):
         while True:
-            cords = input("Ваш ход: ").split()
+            cords = input("Ваш ход: ").replace(" ", "").upper()
+            print(cords)
 
-            if len(cords) != 2:
+            if len(cords) < 2:
                 print("Пожалуйста, введите 2 координаты!")
                 continue
 
-            x, y = cords
-
-            if not (x.isdigit() and y.isdigit()):
-                print("Пожалуйста, введите числа!")
+            if not (cords[0] in string.ascii_uppercase and cords[1:].isdigit()):
+                print("Введите английскую букву и число!")
                 continue
 
-            x, y = int(x), int(y)
-            return Dot(x-1, y-1)
+            return int(cords[1:]) - 1, ord(cords[0]) - ord("A")
 
 
-if __name__ == '__main__':
-    pass
+class Game:
+    def __init__(self, size=6):
+        self.size = size
+
+    def try_board(self):  # пытаемся создать доску
+        size_ships = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
+        board = Board(size=self.size)
+        attempts = 0
+        for cur in size_ships:
+            while True:
+                attempts += 1
+                if attempts > 2000:
+                    return None
+                o_ship = randint(0, 1)
+                if o_ship == 0:
+                    d_x = randint(0, self.size - 1)
+                    d_y = randint(0, self.size - cur)
+                else:
+                    d_x = randint(0, self.size - cur)
+                    d_y = randint(0, self.size - 1)
+                print(f"{attempts}. Пытаюсь создать корабль: Ship(Dot({d_x+1}, {d_y+1}), {cur}, {o_ship})")
+                ship = Ship(Dot(d_x, d_y), cur, o_ship)
+                try:
+                    board.add_ship(ship)
+                    print("Успешно создан!")
+                    print(board)
+                    break
+                except BoardWrongShipException:
+                    pass
+        board.begin()
+        return board
+
+
+if __name__ == "__main__":
+    g = Game()
+    g.size = 11
+    g.try_board()
+
+    # k1 = Ship(Dot(1, 1), 3, 0)
+    # print(k1.dots)
+    # dos1 = Board()
+    # dos1.add_ship(k1)
+    #
+    # k2 = Ship(Dot(3, 0), 3, 0)
+    # dos1.add_ship(k2)
+    # print(dos1)
+    #
+    # dos1.begin()
+    # print(dos1.shot(Dot(5, 5)))
+    # print(dos1.shot(Dot(4, 0)))
+    # print(dos1.shot(Dot(1, 1)))
+    # print(dos1.shot(Dot(1, 2)))
+    # print(dos1.shot(Dot(1, 3)))
+    #
+    # print(dos1)
+    #
+    # play_ai = AI(dos1, dos1)
+    # play_user = User(dos1, dos1)
+    # print(play_ai.move())
+    # print(play_user.move())
+    #
+    # print(dos1)
