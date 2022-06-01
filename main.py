@@ -186,6 +186,12 @@ class User(Player):
 class Game:
     def __init__(self, size=6):
         self.size = size
+        pl = self.random_board()
+        co = self.random_board()
+        co.hid = True
+
+        self.us = User(pl, co)
+        self.ai = AI(co, pl)
 
     def try_board(self):  # пытаемся создать доску
         size_ships = [3, 2, 2, 1, 1, 1, 1]
@@ -220,9 +226,25 @@ class Game:
             board = self.try_board()
         return board
 
+    @staticmethod
+    def greet():
+        print('* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print('*   Добро пожаловать в игру    *')
+        print('*         Морской бой!         *')
+        print('* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print('*  Формат ввода: "шахматный":  *')
+        print('*        буква и цифра.        *')
+        print('*  Пробелы не имеют значения!  *')
+        print('*  Например, "E2" или "e 4".   *')
+        print('* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print('*     Разработчик Гладков      *')
+        print('* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print()
+
 
 if __name__ == "__main__":
     g = Game(size=6)
+    g.greet()
     print(g.random_board())
 
     # k1 = Ship(Dot(1, 1), 3, 0)
