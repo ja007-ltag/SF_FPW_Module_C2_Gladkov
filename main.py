@@ -214,10 +214,19 @@ class Game:
         board.begin()
         return board
 
+    def random_board(self):
+        board = None
+        count = 0
+        while board is None:
+            count += 1
+            print(count)
+            board = self.try_board()
+        return board
+
 
 if __name__ == "__main__":
-    g = Game(size=11)
-    print(g.try_board())
+    g = Game(size=6)
+    print(g.random_board())
 
     # k1 = Ship(Dot(1, 1), 3, 0)
     # print(k1.dots)
