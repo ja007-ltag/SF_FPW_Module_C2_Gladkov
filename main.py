@@ -123,7 +123,7 @@ class Board:
         for ship in self.ships:
             if ship.shot_hit(dot):
                 ship.lives -= 1
-                self.field[dot.x][dot.y] = "x"
+                self.field[dot.x][dot.y] = "X"
                 if ship.lives == 0:
                     self.count += 1
                     self.contour(ship, verb=True)
@@ -139,6 +139,9 @@ class Board:
 
     def begin(self):
         self.busy = []
+
+    def defeat(self):
+        return self.count == len(self.ships)
 
 
 class Player:
@@ -185,18 +188,18 @@ class User(Player):
 class Game:
     def __init__(self, size=6):
         self.size = size
+        self.size_ships = [3, 2, 2, 1, 1, 1, 1]
 
         us_board = self.random_board()
-        ai_board = self.random_board(hid=True)
+        ai_board = self.random_board(hid=False)
 
         self.us = User(us_board, ai_board)
         self.ai = AI(ai_board, us_board)
 
     def try_board(self, hid):  # пытаемся создать доску
-        size_ships = [3, 2, 2, 1, 1, 1, 1]
         board = Board(size=self.size, hid=hid)
         attempts = 0
-        for cur in size_ships:
+        for cur in self.size_ships:
             while True:
                 attempts += 1
                 if attempts > 2000:
@@ -240,16 +243,23 @@ class Game:
         print('* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
         print()
 
+    def print_board(self):
+        print("-" * 20)
+        print("Доска игрока:")
+        print(self.us.board_main)
+        print("-" * 20)
+        print("Доска противника:")
+        print(self.ai.board_main)
+        print("-" * 20)
+
+        # user = self.us.board_main
+        # enemy = self.ai.board_main
+        # print()
+
     def loop(self):
         move_user = True
         while True:
-            print("-"*20)
-            print("Доска игрока:")
-            print(self.us.board_main)
-            print("-" * 20)
-            print("Доска противника:")
-            print(self.ai.board_main)
-            print("-" * 20)
+            self.print_board()
 
             if move_user:
                 print("Ходит пользователь!")
@@ -260,17 +270,21 @@ class Game:
             if not repeat:
                 move_user = not move_user
 
-            if self.ai.board_main.count == len(self.ai.board_main.ships):
-                print("-" * 20)
+            if self.ai.board_main.defeat():
+                self.print_board()
                 print("Пользователь выиграл!")
                 break
 
-            if self.us.board_main.count == len(self.us.board_main.ships):
-                print("-" * 20)
+            if self.us.board_main.defeat():
+                self.print_board()
                 print("Компьютер выиграл!")
                 break
+
+    def start(self):
+        self.greet()
+        self.loop()
 
 
 if __name__ == "__main__":
     g = Game(size=6)
-    g.loop()
+    g.start()
