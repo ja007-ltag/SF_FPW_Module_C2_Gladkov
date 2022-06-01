@@ -216,10 +216,7 @@ class Game:
 
     def random_board(self):
         board = None
-        count = 0
         while board is None:
-            count += 1
-            print(count)
             board = self.try_board()
         return board
 
