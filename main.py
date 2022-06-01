@@ -75,8 +75,8 @@ class Board:
         sep_line = f"{'+---' * (self.size + 1)}+\n"
         res = sep_line
 
-        header = [f"{n:2} " for n in range(1, self.size + 1)]
-        res += f"| \\ |{'|'.join(header)}|\n"
+        header = [n for n in string.ascii_uppercase[:self.size]]
+        res += f"| \\ | {' | '.join(header)} |\n"
         res += sep_line
         for i, row in enumerate(self.field):
             res += f"|{i + 1:2} | {' | '.join(row)} |\n"
@@ -188,7 +188,7 @@ class Game:
         self.size = size
 
     def try_board(self):  # пытаемся создать доску
-        size_ships = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
+        size_ships = [3, 2, 2, 1, 1, 1, 1]
         board = Board(size=self.size)
         attempts = 0
         for cur in size_ships:
@@ -196,6 +196,7 @@ class Game:
                 attempts += 1
                 if attempts > 2000:
                     return None
+
                 o_ship = randint(0, 1)
                 if o_ship == 0:
                     d_x = randint(0, self.size - 1)
@@ -203,12 +204,10 @@ class Game:
                 else:
                     d_x = randint(0, self.size - cur)
                     d_y = randint(0, self.size - 1)
-                print(f"{attempts}. Пытаюсь создать корабль: Ship(Dot({d_x+1}, {d_y+1}), {cur}, {o_ship})")
                 ship = Ship(Dot(d_x, d_y), cur, o_ship)
+
                 try:
                     board.add_ship(ship)
-                    print("Успешно создан!")
-                    print(board)
                     break
                 except BoardWrongShipException:
                     pass
@@ -217,9 +216,8 @@ class Game:
 
 
 if __name__ == "__main__":
-    g = Game()
-    g.size = 11
-    g.try_board()
+    g = Game(size=11)
+    print(g.try_board())
 
     # k1 = Ship(Dot(1, 1), 3, 0)
     # print(k1.dots)
