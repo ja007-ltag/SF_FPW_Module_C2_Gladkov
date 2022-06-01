@@ -186,16 +186,16 @@ class User(Player):
 class Game:
     def __init__(self, size=6):
         self.size = size
-        pl = self.random_board()
-        co = self.random_board()
-        co.hid = True
 
-        self.us = User(pl, co)
-        self.ai = AI(co, pl)
+        us_board = self.random_board()
+        ai_board = self.random_board(hid=True)
 
-    def try_board(self):  # пытаемся создать доску
+        self.us = User(us_board, ai_board)
+        self.ai = AI(ai_board, us_board)
+
+    def try_board(self, hid):  # пытаемся создать доску
         size_ships = [3, 2, 2, 1, 1, 1, 1]
-        board = Board(size=self.size)
+        board = Board(size=self.size, hid=hid)
         attempts = 0
         for cur in size_ships:
             while True:
@@ -220,10 +220,10 @@ class Game:
         board.begin()
         return board
 
-    def random_board(self):
+    def random_board(self, hid=False):
         board = None
         while board is None:
-            board = self.try_board()
+            board = self.try_board(hid)
         return board
 
     @staticmethod
@@ -241,33 +241,13 @@ class Game:
         print('* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
         print()
 
+    # def loop(self):
+
 
 if __name__ == "__main__":
     g = Game(size=6)
     g.greet()
-    print(g.random_board())
+    print(g.us.board_my)
+    print(g.ai.board_my)
 
-    # k1 = Ship(Dot(1, 1), 3, 0)
-    # print(k1.dots)
-    # dos1 = Board()
-    # dos1.add_ship(k1)
-    #
-    # k2 = Ship(Dot(3, 0), 3, 0)
-    # dos1.add_ship(k2)
-    # print(dos1)
-    #
-    # dos1.begin()
-    # print(dos1.shot(Dot(5, 5)))
-    # print(dos1.shot(Dot(4, 0)))
-    # print(dos1.shot(Dot(1, 1)))
-    # print(dos1.shot(Dot(1, 2)))
-    # print(dos1.shot(Dot(1, 3)))
-    #
-    # print(dos1)
-    #
-    # play_ai = AI(dos1, dos1)
-    # play_user = User(dos1, dos1)
-    # print(play_ai.move())
-    # print(play_user.move())
-    #
-    # print(dos1)
+
