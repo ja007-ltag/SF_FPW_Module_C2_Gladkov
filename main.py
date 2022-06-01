@@ -142,8 +142,8 @@ class Board:
 
 
 class Player:
-    def __init__(self, board_my, board_enemy):
-        self.board_my = board_my
+    def __init__(self, board_main, board_enemy):
+        self.board_main = board_main
         self.board_enemy = board_enemy
 
     def ask(self):
@@ -170,17 +170,16 @@ class User(Player):
     def ask(self):
         while True:
             cords = input("Ваш ход: ").replace(" ", "").upper()
-            print(cords)
 
             if len(cords) < 2:
                 print("Пожалуйста, введите 2 координаты!")
                 continue
 
             if not (cords[0] in string.ascii_uppercase and cords[1:].isdigit()):
-                print("Введите английскую букву и число!")
+                print("Введите латинскую букву и число!")
                 continue
 
-            return int(cords[1:]) - 1, ord(cords[0]) - ord("A")
+            return Dot(int(cords[1:]) - 1, ord(cords[0]) - ord("A"))
 
 
 class Game:
@@ -241,13 +240,37 @@ class Game:
         print('* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
         print()
 
-    # def loop(self):
+    def loop(self):
+        move_user = True
+        while True:
+            print("-"*20)
+            print("Доска игрока:")
+            print(self.us.board_main)
+            print("-" * 20)
+            print("Доска противника:")
+            print(self.ai.board_main)
+            print("-" * 20)
+
+            if move_user:
+                print("Ходит пользователь!")
+                repeat = self.us.move()
+            else:
+                print("Ходит компьютер!")
+                repeat = self.ai.move()
+            if not repeat:
+                move_user = not move_user
+
+            if self.ai.board_main.count == len(self.ai.board_main.ships):
+                print("-" * 20)
+                print("Пользователь выиграл!")
+                break
+
+            if self.us.board_main.count == len(self.us.board_main.ships):
+                print("-" * 20)
+                print("Компьютер выиграл!")
+                break
 
 
 if __name__ == "__main__":
     g = Game(size=6)
-    g.greet()
-    print(g.us.board_my)
-    print(g.ai.board_my)
-
-
+    g.loop()
