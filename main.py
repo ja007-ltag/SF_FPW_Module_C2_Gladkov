@@ -9,12 +9,12 @@ class BoardException(Exception):
 
 class BoardOutException(BoardException):
     def __str__(self):
-        return "Вы пытаетесь выстрелить за доску!"
+        return " Вы пытаетесь выстрелить за доску!"
 
 
 class BoardUserException(BoardException):
     def __str__(self):
-        return "Вы уже стреляли в эту клетку"
+        return " Вы уже стреляли в эту клетку"
 
 
 class BoardWrongShipException(BoardException):
@@ -127,14 +127,14 @@ class Board:
                 if ship.lives == 0:
                     self.count += 1
                     self.contour(ship, verb=True)
-                    print("Корабль уничтожен!")
-                    return False
+                    print(" Корабль уничтожен!")
+                    return True
                 else:
-                    print("Корабль ранен!")
+                    print(" Корабль ранен!")
                     return True
 
         self.field[dot.x][dot.y] = "."
-        print("Мимо!")
+        print(" Мимо!")
         return False
 
     def begin(self):
@@ -165,33 +165,33 @@ class Player:
 class AI(Player):
     def ask(self):
         dot = Dot(randint(0, 5), randint(0, 5))
-        print(f"Ход компьютера: {dot.x+1} {dot.y+1}")
+        print(f" Ход компьютера: {chr(dot.y + ord('A'))}{dot.x + 1}")
         return dot
 
 
 class User(Player):
     def ask(self):
         while True:
-            cords = input("Ваш ход: ").replace(" ", "").upper()
+            cords = input("            Ваш ход: ").replace(" ", "").upper()
 
             if len(cords) < 2:
-                print("Пожалуйста, введите 2 координаты!")
+                print(" Пожалуйста, введите 2 координаты!")
                 continue
 
             if not (cords[0] in string.ascii_uppercase and cords[1:].isdigit()):
-                print("Введите латинскую букву и число!")
+                print(" Введите латинскую букву и число!")
                 continue
 
             return Dot(int(cords[1:]) - 1, ord(cords[0]) - ord("A"))
 
 
 class Game:
-    def __init__(self, size=6):
+    def __init__(self, size=6, size_ships=None):
         self.size = size
         self.size_ships = [3, 2, 2, 1, 1, 1, 1]
 
         us_board = self.random_board()
-        ai_board = self.random_board(hid=False)
+        ai_board = self.random_board(hid=True)
 
         self.us = User(us_board, ai_board)
         self.ai = AI(ai_board, us_board)
@@ -230,31 +230,30 @@ class Game:
 
     @staticmethod
     def greet():
-        print('* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
-        print('*   Добро пожаловать в игру    *')
-        print('*         Морской бой!         *')
-        print('* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
-        print('*  Формат ввода: "шахматный":  *')
-        print('*        буква и цифра.        *')
-        print('*  Пробелы не имеют значения!  *')
-        print('*  Например, "E2" или "e 4".   *')
-        print('* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
-        print('*     Разработчик Гладков      *')
-        print('* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print(' *   Добро пожаловать в игру    *')
+        print(' *         Морской бой!         *')
+        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print(' *  Формат ввода: "шахматный":  *')
+        print(' *        буква и цифра.        *')
+        print(' *  Пробелы не имеют значения!  *')
+        print(' *  Например, "E2" или "e 4".   *')
+        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print(' *     Разработчик Гладков      *')
+        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
         print()
 
-    def print_board(self):
-        print("-" * 20)
-        print("Доска игрока:")
-        print(self.us.board_main)
-        print("-" * 20)
-        print("Доска противника:")
-        print(self.ai.board_main)
-        print("-" * 20)
+    def split_board(self, name, board):
+        len_str = 4 * (self.size + 1) + 1
+        res = name + " " * (len_str - len(name)) + "\n"
+        res += str(board)
+        return res.split("\n")
 
-        # user = self.us.board_main
-        # enemy = self.ai.board_main
-        # print()
+    def print_board(self):
+        user = self.split_board("Доска игрока:", self.us.board_main)
+        enemy = self.split_board("Доска противника:", self.ai.board_main)
+        for b1, b2 in zip(user, enemy):
+            print(f" {b1}{' ' * 5}{b2}")
 
     def loop(self):
         move_user = True
@@ -262,22 +261,22 @@ class Game:
             self.print_board()
 
             if move_user:
-                print("Ходит пользователь!")
+                print(" Ходит пользователь!")
                 repeat = self.us.move()
             else:
-                print("Ходит компьютер!")
+                print(" Ходит компьютер!")
                 repeat = self.ai.move()
             if not repeat:
                 move_user = not move_user
 
             if self.ai.board_main.defeat():
                 self.print_board()
-                print("Пользователь выиграл!")
+                print(" Вы выиграли!")
                 break
 
             if self.us.board_main.defeat():
                 self.print_board()
-                print("Компьютер выиграл!")
+                print(" Вы проиграли!")
                 break
 
     def start(self):
