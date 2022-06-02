@@ -188,7 +188,7 @@ class User(Player):
 class Game:
     def __init__(self, size=6, size_ships=None):
         self.size = size
-        self.size_ships = [3, 2, 2, 1, 1, 1, 1]
+        self.size_ships = size_ships
 
         us_board = self.random_board()
         ai_board = self.random_board(hid=True)
@@ -228,21 +228,6 @@ class Game:
             board = self.try_board(hid)
         return board
 
-    @staticmethod
-    def greet():
-        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
-        print(' *   Добро пожаловать в игру    *')
-        print(' *         Морской бой!         *')
-        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
-        print(' *  Формат ввода: "шахматный":  *')
-        print(' *        буква и цифра.        *')
-        print(' *  Пробелы не имеют значения!  *')
-        print(' *  Например, "E2" или "e 4".   *')
-        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
-        print(' *     Разработчик Гладков      *')
-        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
-        print()
-
     def split_board(self, name, board):
         len_str = 4 * (self.size + 1) + 1
         res = name + " " * (len_str - len(name)) + "\n"
@@ -280,10 +265,64 @@ class Game:
                 break
 
     def start(self):
-        self.greet()
         self.loop()
 
 
+class Start:
+    def __init__(self):
+        self.size = None
+        self.size_ships = []
+
+    @staticmethod
+    def greet():
+        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print(' *   Добро пожаловать в игру    *')
+        print(' *         Морской бой!         *')
+        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print(' *  Формат ввода: "шахматный":  *')
+        print(' *        буква и цифра.        *')
+        print(' *  Пробелы не имеют значения!  *')
+        print(' *  Например, "E2" или "e 4".   *')
+        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print(' *     Разработчик Гладков      *')
+        print(' * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *')
+        print()
+
+    def set_options(self, mode):
+        def gen_size_ships(n):
+            return [i for i in range(n, 0, -1) for _ in range(n + 1 - i)]
+
+        if mode == "A":
+            self.size = 6
+            self.size_ships = [3, 2, 2, 1, 1, 1, 1]
+        elif mode == "B":
+            self.size = 10
+            self.size_ships = gen_size_ships(4)
+        else:
+            self.size = 15
+            self.size_ships = gen_size_ships(5)
+
+    def options(self):
+        print(" Выберите режим игры!")
+        print(" [A]: Мини - 6x6 (3п*1, 2п*3, 1п*4)")
+        print(" [B]: Классический - 10x10 (4п*1, 3п*2, 2п*3, 1п*4)")
+        print(" [С]: Мега - 15x15 (5п*1, 4п*2, 3п*3, 2п*4, 1п*5)")
+
+        while True:
+            mode = input(" Ваш выбор: ").upper().replace(" ", "")
+            if len(mode) != 1 or not (mode in "ABC"):
+                print(" Введите одну букву A, B, C!")
+                continue
+            break
+        self.set_options(mode)
+
+    def game_create(self):
+        self.greet()
+        self.options()
+        new_game = Game(size=self.size, size_ships=self.size_ships)
+        new_game.start()
+
+
 if __name__ == "__main__":
-    g = Game(size=6)
-    g.start()
+    g = Start()
+    g.game_create()
