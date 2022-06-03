@@ -148,6 +148,7 @@ class Player:
     def __init__(self, board_main, board_enemy):
         self.board_main = board_main
         self.board_enemy = board_enemy
+        self.size = board_enemy.size
 
     def ask(self):
         raise NotImplementedError()
@@ -164,7 +165,7 @@ class Player:
 
 class AI(Player):
     def ask(self):
-        dot = Dot(randint(0, 5), randint(0, 5))
+        dot = Dot(randint(0, self.size), randint(0, self.size))
         print(f" Ход компьютера: {chr(dot.y + ord('A'))}{dot.x + 1}")
         return dot
 
